@@ -23,7 +23,7 @@ labels = weights.meta["categories"]
 # 3️⃣ OpenCV video capture
 # ----------------------------
 
-img = "C:/Users/nthng/vsc/people.mp4"  # Change to your image path
+img = "..."  # Change to your image path
 
 cap = cv2.VideoCapture(0)  # 0 = default webcam
 
