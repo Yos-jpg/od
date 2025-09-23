@@ -1,17 +1,10 @@
 # Object Detection Model script for the LHS DEEP SEA TACTICS CLUB
 
+## This used CUO (Common Underwater Objects) & RUOD (Real-worl Underwater Object Detection)
 
-
-'
 
 this is supposed to detect underwater objects to help the ROV locate some debris and easily observe marine life to protect and sustain the environment
 
 Dependencies:
-just pytorch and opencv use pip install
-
-pytorch: pip3 install torch torchvision
-
-opencv:  pip install opencv-python
-
-if you have an Nvidia gpu, use the one with cuda, if not good luck
+download the requirements.txt using pip install
 
