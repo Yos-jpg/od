@@ -97,7 +97,6 @@ class Frame():
 frame = Frame().get_frame
 
 
-
 class DT():
     def draw_text(self, text, x, y, font_scale=0.5, color=(255, 255, 255)):
         (tw, th), _ = cv2.getTextSize(
@@ -120,7 +119,6 @@ class DT():
 
 
 draw = DT().draw_text
-
 
 
 class UI():
@@ -193,7 +191,6 @@ class UI():
 
 
 UserI = UI().draw_ui
-
 
 
 running = True
