@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 import torchvision.transforms as T
 from torchvision.models.detection import fasterrcnn_resnet50_fpn, FasterRCNN_ResNet50_FPN_Weights
-import ctypes as c
 # ----------------------------
 # 1️⃣ Device selection (GPU if available)
 # ----------------------------
@@ -21,13 +20,10 @@ model.to(device).eval()
 # Class labels
 labels = weights.meta["categories"]
 
-initial_width = 1920
-
-initial_height = 1080
 
 sdl3.SDL_Init(sdl3.SDL_INIT_VIDEO)
 window = sdl3.SDL_CreateWindow(
-    b"ROV Pilot UI", initial_width, initial_height, sdl3.SDL_WINDOW_RESIZABLE)
+    b"ROV Pilot UI", 1920, 1080, sdl3.SDL_WINDOW_RESIZABLE)
 renderer = sdl3.SDL_CreateRenderer(window, None)
 
 # ---------------- ROV State ----------------
@@ -63,9 +59,7 @@ class Frame():
         if not ok:
             return None
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR → RGB
-        # scale to fit UI
-        frame = cv2.resize(frame, (640, 480),
-                           interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, (640, 480))           # scale to fit UI
 
         img_tensor = torch.from_numpy(
             frame).permute(2, 0, 1).float() / 255.0
@@ -103,6 +97,7 @@ class Frame():
 frame = Frame().get_frame
 
 
+
 class DT():
     def draw_text(self, text, x, y, font_scale=0.5, color=(255, 255, 255)):
         (tw, th), _ = cv2.getTextSize(
@@ -127,13 +122,13 @@ class DT():
 draw = DT().draw_text
 
 
-class UI():
 
+class UI():
     def draw_ui(self):
         sdl3.SDL_SetRenderDrawColor(renderer, 14, 18, 30, 255)
         sdl3.SDL_RenderClear(renderer)
 
-        vid_x, vid_y, vid_w, vid_h = 240, 40, 1280, 960
+        vid_x, vid_y, vid_w, vid_h = 240, 40, 640, 480
         texinfo = frame()  # Fixed: Added parentheses to call the function
         if texinfo:
             tex, w, h = texinfo
@@ -146,7 +141,7 @@ class UI():
                 renderer, sdl3.SDL_FRect(vid_x, vid_y, vid_w, vid_h))
             draw("[No Video]", vid_x + 20, vid_y + 20, 0.6)
 
-            # Telemetry
+        # Telemetry
         draw(f"Depth: {state.depth:.2f}m", vid_x, vid_y + vid_h + 10, 0.6)
         draw(f"Heading: {state.heading:.0f}°",
              vid_x + 220, vid_y + vid_h + 10, 0.6)
@@ -196,12 +191,10 @@ class UI():
         # Fixed: Moved SDL_RenderPresent inside the draw_ui method
         sdl3.SDL_RenderPresent(renderer)
 
-        return self
+
+UserI = UI().draw_ui
 
 
-UserI = UI()
-
-UserI.draw_ui
 
 running = True
 event = sdl3.SDL_Event()
@@ -209,19 +202,9 @@ while running:
     while sdl3.SDL_PollEvent(event):
         if event.type == sdl3.SDL_EVENT_QUIT:
             running = False
-        elif event.type == sdl3.SDL_EVENT_WINDOW_RESIZED:
-            new_width, new_height = c.c_long(0), c.c_long(0)
-            sdl3.SDL_GetWindowSize(window, new_width, new_height)
-            scale_x = new_width.value/int(initial_width)
-            scale_y = new_height.value/int(initial_height)
-
-            vid_scaledx = UserI.vid_x * scale_x
-            vid_scaledy = UserI.vid_y * scale_y
-            vid_scaledw = UserI.vid_x * scale_x
-            vid_scaledh = UserI.vid_y * scale_y
 
     # Fixed: Actually call the draw function
-    UserI.draw_ui()
+    UserI()
 
 cap.release()
 sdl3.SDL_Quit()

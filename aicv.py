@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 from typing import Dict, List, Tuple, Optional
 import time
+from pytorch import pytorch3d
 
 
 class RANGERMaskRCNN3D(nn.Module):
